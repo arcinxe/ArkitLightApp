@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -12,28 +13,16 @@ namespace ArktiLight
         {
             Url = url;
         }
-        public async Task<LedsStatesModel.Leds> SetLeds(string query)
+        public async Task<Leds> SetLeds(string query)
         {
             var fullUrl = $"{Url}?{query}";
             var ledsResponse = await _client.GetAsync(fullUrl);
             ledsResponse.EnsureSuccessStatusCode();
             var ledStates = ledsResponse.Content.ReadAsStringAsync();
-            var leds = JsonConvert.DeserializeObject<LedsStatesModel.Leds>(ledStates.Result);
+            System.Console.WriteLine(ledStates.Result);
+            var leds = JsonConvert.DeserializeObject<Leds>(ledStates.Result);
             return leds;
         }
 
-        public LedsStatesModel.Leds ChangeBrightness(int led, int offset)
-        {
-            return SetLeds($"ledIndex={led}&changeBrightness={offset}").Result;
-        }
-
-        public LedsStatesModel.Leds SetBrightness(int led, int value)
-        {
-            return SetLeds($"ledIndex={led}&setBrightness={value}").Result;
-        }
-        public LedsStatesModel.Leds SetState(int led, int state)
-        {
-            return SetLeds($"ledIndex={led}&setState={state}").Result;
-        }
     }
 }
