@@ -3,19 +3,15 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace ArktiLight
-{
-    public class ArktiLightClient
-    {
+namespace ArktiLight {
+    public class ArktiLightClient {
         private readonly static HttpClient _client = new HttpClient();
         public string Url { get; set; }
-        public ArktiLightClient(string url)
-        {
+        public ArktiLightClient(string url) {
             Url = url;
         }
-        public async Task<Leds> SetLeds(string query)
-        {
-            var fullUrl = $"{Url}?{query}";
+        public async Task<Leds> SetLeds(List<string> queries) {
+            var fullUrl = Url + "?" + string.Join(" & ", queries);
             var ledsResponse = await _client.GetAsync(fullUrl);
             ledsResponse.EnsureSuccessStatusCode();
             var ledStates = ledsResponse.Content.ReadAsStringAsync();

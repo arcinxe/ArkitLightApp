@@ -1,54 +1,86 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static System.Environment;
 
-namespace ArktiLight
-{
-    class Program
-    {
+namespace ArktiLight {
+    class Program {
+        private static AddressesManager _addressesManager = new AddressesManager();
+        private static SettingsManager _settingsManager = new SettingsManager();
         static ManualResetEvent resetEvent = new ManualResetEvent(false);
-        static void Main(string[] args)
-        {
+        static void Main(string[] args) {
+            switch (args.FirstOrDefault()) {
+                case "add":
+                    Add(args);
+                    break;
+                case "remove":
+                    Remove(args);
+                    break;
+                case "list":
+                    System.Console.WriteLine(ListAll(args));
+                    break;
+                case null:
+                    System.Console.WriteLine("No arguments provided. Exiting.");
+                    break;
+                default:
+                    System.Console.WriteLine("Wrong arguments.");
+                    break;
+            }
             var client = new ArktiLightClient("http://arktilight.local/api/v3");
-            Task.Run( () => client.SetLeds("LED0=SS-1")).Wait();
-            Console.WriteLine(GetFolderPath(SpecialFolder.ApplicationData));
-            // if(args.Count() == 0)
-            //     System.Console.WriteLine(client.SetLeds("").Result);
-            
-            // foreach (var arg in args)
-            //     System.Console.WriteLine(client.SetLeds(arg).Result);
+            var queries = new List<string>() { "LED0=SS-1", "LED1=SS-1" };
+            Task.Run(() => client.SetLeds(queries).Wait());
+        }
 
-            // var action = "";
-            // var leds = new List<int>();
-            // var setBrightnesses =new List<int>();
-            // var changeBrightnesses = new List<int>();
-            // var changeStates = new List<int>();
-            // foreach (var arg in args)
-            // {
-            //     switch (arg)
-            //     {
-            //         case "--change-brightness":
-            //             action = "changeBrightness";
-            //             break;
-            //         case "--set-brightness":
-            //             action = "setBrightness";
-            //             break;
-            //         case "--set-state":
-            //             action = "setState";
-            //             break;
-            //         case "--led":
-            //             action = "ledIndex";
-            //             break;
-            //         default:
-            //             break;
-            //     }
+        public static void Add(IEnumerable<string> args) {
+            switch (args.ElementAtOrDefault(1)) {
+                case "addr":
+                case "address":
+                    _addressesManager.Add(args.Skip(2));
+                    break;
+                case "set":
+                case "setting":
+                    _settingsManager.Add(args.Skip(2));
+                    break;
+            }
+        }
 
-            // }
+        public static void Remove(IEnumerable<string> args) {
+            switch (args.ElementAtOrDefault(1)) {
+                case "addr":
+                case "address":
+                    _addressesManager.Remove(args.Skip(2));
+                    break;
+                case "set":
+                case "setting":
+                    _settingsManager.Remove(args.Skip(2));
+                    break;
+            }
+        }
 
-
-
+        public static string ListAll(IEnumerable<string> args) {
+            var result = "";
+            switch (args.ElementAtOrDefault(1)) {
+                case "addr":
+                case "address":
+                    result = _addressesManager.ListAll();
+                    break;
+                case "set":
+                case "setting":
+                    result = _settingsManager.ListAll();
+                    break;
+                case null:
+                    result += "Addresses:\n";
+                    result += _addressesManager.ListAll();
+                    result += "\n\nSettings:\n";
+                    result += _settingsManager.ListAll();
+                    break;
+                default:
+                    break;
+            }
+            return result;
         }
     }
 }
