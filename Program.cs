@@ -44,6 +44,10 @@ namespace ArktiLight {
                 case "setting":
                     _settingsManager.Add(args.Skip(2));
                     break;
+                case "ex":
+                case "execute":
+
+                break;                
             }
         }
 

@@ -11,6 +11,7 @@ namespace ArktiLight {
             foreach (var address in addresses) {
                 var splitted = address.Split(",").Select(a => a.Trim());
                 if (!Addresses.Exists(a => splitted.Count() == 2 && a.Alias == splitted.FirstOrDefault())) {
+                    System.Console.WriteLine($"Added new address: {splitted.ElementAtOrDefault(0)} => {splitted.ElementAtOrDefault(1)}");
                     Addresses.Add(new Address() {
                         Alias = splitted.ElementAtOrDefault(0),
                             Path = splitted.ElementAtOrDefault(1)
@@ -23,6 +24,9 @@ namespace ArktiLight {
         public void Remove(IEnumerable<string> names) {
             ReadFromFile();
             foreach (var name in names) {
+                foreach (var address in Addresses.Where(a => a.Alias == name || a.Path == name)) {
+                    System.Console.WriteLine($"Removed address: {address.Alias} => {address.Path}");
+                }
                 Addresses.RemoveAll(a => a.Alias == name || a.Path == name);
             }
             SaveToFile();
