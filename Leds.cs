@@ -1,14 +1,11 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-
-public partial class Leds
-    {
-        [JsonProperty("lights")]
-        public List<Light> Lights { get; set; }
-    }
-public class Light
-{
+public partial class Leds {
+    [JsonProperty("lights")]
+    public List<Light> Lights { get; set; }
+}
+public class Light {
     [JsonProperty("index")]
     public long Index { get; set; }
 
